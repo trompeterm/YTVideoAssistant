@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 import numpy as np
 from tools.transcript import Transcript
 from tools.chunker import Chunker
@@ -65,17 +65,34 @@ def process_video(video_link: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing video: {str(e)}")
 
+class AskRequest(BaseModel):
+    question: str
+    message_history: Optional[List[Dict[str, Any]]] = []
+
 @app.post("/ask")
-def ask_question(question: str):
+def ask_question(request: AskRequest):
     if not video_state["is_processed"]:
         raise HTTPException(status_code=400, detail="No video has been processed yet. Please call /process-video first.")
     
     try:
-        results = embedder.search(question, video_state["index"], video_state["chunks"])
-        response = chat_completion.generate_response(question, results, [])
+        results = embedder.search(request.question, video_state["index"], video_state["chunks"])
+        
+        # Convert message history to the format expected by chat completion
+        history = []
+        for msg in request.message_history:
+            if msg.get("sender") == "user":
+                history.append(f"User: {msg.get('text', '')}")
+            elif msg.get("sender") == "assistant":
+                history.append(f"Assistant: {msg.get('text', '')}")
+        
+        # Debug: print the history being sent
+        print(f"Debug - History being sent: {history}")
+        print(f"Debug - Current question: {request.question}")
+        
+        response = chat_completion.generate_response(request.question, results, history)
         
         return {
-            "question": question,
+            "question": request.question,
             "answer": response,
             "relevant_chunks_count": len(results)
         }

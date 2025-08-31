@@ -88,8 +88,15 @@ function App() {
     setIsLoading(true)
 
     try {
-      const response = await fetch(`${BASE_URL}/ask?question=${encodeURIComponent(currentInput)}`, {
+      const response = await fetch(`${BASE_URL}/ask`, {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question: currentInput,
+          message_history: messages
+        })
       })
 
       if (!response.ok) {
