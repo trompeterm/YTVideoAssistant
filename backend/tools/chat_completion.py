@@ -18,7 +18,6 @@ class ChatCompletion:
                  You will need to use the chunks to answer the question.
                  You will also be given a list of history of the conversation.
                  You may need to use the history to answer the question.
-                
                  
                  Transcript chunks: {chunks}
                  History: {history}
