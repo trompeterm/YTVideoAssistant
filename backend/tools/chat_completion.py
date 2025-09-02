@@ -9,28 +9,21 @@ class ChatCompletion:
         self.client = OpenAI()
     
     def generate_response(self, content: str, chunks: list[str], history: list[str]):
-        # Debug: print what we're receiving
-        print(f"Debug - Chat completion received:")
-        print(f"  Content: {content}")
-        print(f"  History length: {len(history)}")
-        print(f"  History: {history}")
-        print(f"  Chunks length: {len(chunks)}")
-        
-        # Format the system message with actual values
         system_content = f"""You are a helpful assistant that can answer questions about the content of the video.
 
-IMPORTANT: You have access to the conversation history below. You MUST use this history to provide context-aware responses. If the user asks about something mentioned in previous messages, refer to the history.
+                IMPORTANT: You have access to the conversation history below. You MUST use this history to provide context-aware responses. If the user asks about something mentioned in previous messages, refer to the history.
 
-You will also be given a list of chunks of the most relevant parts of the transcript.
-You will need to use the chunks to answer the question.
+                You will also be given a list of chunks of the most relevant parts of the transcript.
+                You will need to use the chunks to answer the question.
 
-CONVERSATION HISTORY:
-{history if history else "No previous conversation history."}
+                RELEVANT TRANSCRIPT CHUNKS:
+                {chunks}
 
-RELEVANT TRANSCRIPT CHUNKS:
-{chunks}
+                CONVERSATION HISTORY:
+                {history if history else "No previous conversation history."}
 
-Remember to use both the conversation history and the transcript chunks to provide accurate, contextual responses.
+                Remember to use both the conversation history and the transcript chunks to provide accurate, contextual responses.
+                If the user mentions "you", they are referring to you, the assistant. If the user says "the speaker", they are referring to the person in the video. 
 """
         
         response = self.client.chat.completions.create(
