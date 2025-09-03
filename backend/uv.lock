@@ -32,6 +32,7 @@ dependencies = [
     { name = "fastapi", extra = ["standard"] },
     { name = "openai" },
     { name = "python-dotenv" },
+    { name = "uvicorn" },
     { name = "youtube-transcript-api" },
 ]
 
@@ -41,6 +42,7 @@ requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.116.1" },
     { name = "openai", specifier = ">=1.100.2" },
     { name = "python-dotenv", specifier = ">=1.1.1" },
+    { name = "uvicorn", specifier = ">=0.35.0" },
     { name = "youtube-transcript-api", specifier = ">=1.2.2" },
 ]
 
